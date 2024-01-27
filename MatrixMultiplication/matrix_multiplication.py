@@ -25,4 +25,4 @@ if __name__ == "__main__":
     A = [[1, 2], [3, 4]]
     B = [[5, 6], [7, 8]]
     result, computation_time = multiply_matrices(A, B)
-    print(f"Result:{result}Computation Time: {computation_time} seconds")
+    print(f"Result: {result}, Computation Time: {computation_time} seconds")
