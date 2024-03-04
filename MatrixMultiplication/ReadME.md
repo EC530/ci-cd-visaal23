@@ -1,10 +1,12 @@
-# Matrix Multiplication with Time Measurement
+# Matrix Multiplication Package
 
-This assignment provides a Python implementation of a matrix multiplication function that not only computes the product of two matrices but also measures the computation time taken for the operation.
+This Python package provides a simple implementation of matrix multiplication. It includes robust error handling, logging, and a comprehensive testing suite built with Pytest.
 
 ## Features
 
-- Matrix multiplication of two matrices provided as lists of lists.
-- Computation time measurement of the multiplication operation.
-- Validation of matrix dimensions before multiplication.
-- Error handling for incompatible matrices.
+- **Matrix Multiplication**: Multiply two matrices provided they have compatible dimensions.
+- **Error Handling**: Gracefully handles errors related to incompatible matrix dimensions.
+- **Logging**: Logs the process of matrix multiplication, including successful operations and errors.
+- **Testing**: A suite of tests using Pytest to ensure the correctness of the multiplication operation.
+
+
