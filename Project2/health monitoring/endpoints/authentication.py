@@ -1,26 +1,30 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS, cross_origin  # Import CORS
 from datetime import datetime, timezone
-
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+auth_blueprint = Blueprint('auth', __name__)
+
 
 # Configure MongoDB Atlas connection
 # Ensure to replace <username>, <password>, and cluster0.xxxxx with your actual MongoDB Atlas details
-app.config["MONGO_URI"] = "mongodb+srv://visaaln2:visaal456@ec530.qevqtrc.mongodb.net/healthmonitoring?retryWrites=true&w=majority"
-mongo = PyMongo(app)
+# app.config["MONGO_URI"] = "mongodb+srv://admin:admin@ec530.qevqtrc.mongodb.net/healthmonitoring?retryWrites=true&w=majority&appName=ec530"
+# mongo = PyMongo(app)
 
 
 
-@app.route('/register', methods=['POST'])
+@auth_blueprint.route('/register', methods=['POST'])
+@cross_origin()
 def register():
+    from app import mongo
     data = request.json
+    print(data)
     # Check for the presence of required fields in the input data
-    if not all(key in data for key in ['username', 'email', 'password', 'role', 'firstName', 'lastName', 'dateOfBirth']):
+    if not all(key in data for key in ['username', 'email', 'password', 'roles', 'firstName', 'lastName', 'dateOfBirth']):
         return jsonify({'message': 'Missing required user information'}), 400
 
     # Check if the user already exists in either the authentication or users collection
@@ -43,9 +47,10 @@ def register():
             "lastName": data['lastName'],
             "email": data['email'],
             "dateOfBirth": date_of_birth,
+            "username": data['username']
             # Include other relevant personal information here
         },
-        "roles": [data['role']],
+        "roles": data['roles'],
         "status": "active",
         "registrationDate": datetime.now(timezone.utc)
     }
@@ -64,7 +69,7 @@ def register():
 
 
 # Login endpoint
-@app.route('/login', methods=['POST'])
+@auth_blueprint.route('/login', methods=['POST'])
 def login():
     print("login requested")
     data = request.json
@@ -79,15 +84,15 @@ def login():
         return jsonify({'message': 'Invalid username or password'}), 401
 
 # Placeholder for logout - Implement token revocation or expiration handling
-@app.route('/logout', methods=['POST'])
+@auth_blueprint.route('/logout', methods=['POST'])
 def logout():
     # Logic to handle logout, e.g., token blacklist or expiry
     return jsonify({'message': 'Logged out successfully'}), 200
 
-@app.route('/')
-def hello_world():
-    print("test")
-    return "helloworld"
+# @auth_blueprint.route('/')
+# def hello_world():
+#     print("test")
+#     return "helloworld"
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
