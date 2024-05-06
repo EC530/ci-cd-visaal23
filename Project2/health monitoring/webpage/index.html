@@ -38,42 +38,44 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
     
-            // Prepare the data to be sent in the POST request
-            const postData = {
-                username: username,
-                password: password,
-            };
-            
-            fetch('http://localhost:5000/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json', // This line is crucial
-                },
-                body: JSON.stringify(postData), // Corrected line
-            })
-            .then(response => {
-                // When using 'no-cors', response.type will be 'opaque' and response.json() will not be available
-                if (response.ok) {
-                    console.log('Success');
-                    // Handle success
-                } else {
-                    console.error('Server returned error response');
-                    document.getElementById('error-message').style.display = 'block'; // Show error message
-                    // Add 'error' class to input groups to change their appearance
-                    document.querySelectorAll('.input-group').forEach(function(group) {
-                        group.classList.add('error');
-                    });
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-
-            });
-            
-
+            // Check if the credentials are for the admin
+            if (username === 'admin' && password === 'admin') {
+                // Redirect to the admin portal
+                window.location.href = 'C:/Users/narne/OneDrive/Documents/GitHub/VitalWatch/webpage/administrator/administrator.html'; // Adjust this URL to your actual admin portal path
+            } else {
+                // Prepare the data to be sent in the POST request for normal user login
+                const postData = {
+                    username: username,
+                    password: password,
+                };
+    
+                fetch('http://localhost:5000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // This line is crucial
+                    },
+                    body: JSON.stringify(postData), // Corrected line
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Success');
+                        // Here you could redirect or handle successful login differently
+                    } else {
+                        console.error('Server returned error response');
+                        document.getElementById('error-message').style.display = 'block'; // Show error message
+                        // Add 'error' class to input groups to change their appearance
+                        document.querySelectorAll('.input-group').forEach(function(group) {
+                            group.classList.add('error');
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
         });
     });
+    </script>
     
-</script>
 
 </html>

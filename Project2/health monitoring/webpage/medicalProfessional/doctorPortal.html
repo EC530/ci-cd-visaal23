@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sidebar Navigation</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex; /* Added to lay out sidebar and content side by side */
+    min-height: 100vh;
+    background-color: #ECECEC;
+  }
+
+  .sidebar {
+    background-color: #34495e;
+    color: #ecf0f1;
+    width: 260px; /* Sidebar width */
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
+
+  .content {
+    margin-left: 250px; /* Same as the sidebar width */
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto; /* Allows scrolling within the content area */
+  }
+
+  .sidebar-header {
+    padding: 10px 15px;
+    background: #2c3e50;
+    color: #ecf0f1;
+    text-align: center;
+  }
+
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sidebar ul li {
+    margin: 0; /* Remove margin if any */
+    padding: 0; /* Remove padding here */
+    border-bottom: 1px solid #2c3e50;
+  }
+
+  .sidebar ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: block; /* Ensures it fills the entire LI */
+    padding: 15px; /* Move padding from LI to A */
+    width: 100%; /* Ensure it covers full width */
+  }
+
+  .sidebar ul li i {
+    margin-right: 10px;
+  }
+
+  .sidebar ul li:hover, .sidebar ul li a:hover {
+    background-color: #2980b9;
+    cursor: pointer;
+  }
+
+  .sidebar-nav {
+    flex-grow: 1;
+  }
+
+  .signout {
+    margin-top: auto;
+    padding: 15px;
+    border-top: 1px solid #2c3e50;
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h3>Vital Watch</h3>
+  </div>
+  <ul class="sidebar-nav">
+    <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+    <li><a href="#patients"><i class="fas fa-user-injured"></i> Patients</a></li>
+    <li><a href="#appointments"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+    <li><a href="#devices"><i class="fas fa-heartbeat"></i> Devices</a></li>
+    <li><a href="#messages"><i class="fas fa-comments"></i> Messages</a></li>
+    <li><a href="alerts.html"><i class="fas fa-bell"></i> Alerts</a></li>
+    <li class="signout"><a href="#signout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+  </ul>
+</div>
+
+<div class="content" id="main-content">
+  <!-- Content loaded dynamically will appear here -->
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const links = document.querySelectorAll('.sidebar-nav a[href$=".html"]');
+      const content = document.getElementById('main-content');
+  
+      links.forEach(link => {
+          link.addEventListener('click', function(e) {
+              e.preventDefault();
+              const href = this.getAttribute('href');
+              content.innerHTML = '<iframe src="' + href + '" style="width:100%;height:100vh;border:none;"></iframe>';
+          });
+      });
+  });
+  </script>
+  
+
+</body>
+</html>

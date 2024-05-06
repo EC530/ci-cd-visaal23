@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New User</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 100px;
+        }
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .logout-button {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: url('src/logoutIcon.png') no-repeat center center / cover;
+            background-color: #ccc; /* Fallback color if image doesn't load */
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .logout-button:hover {
+            background-color: #0056b3; /* Button color changes on hover */
+            width: 100px; /* Allow text width */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logout-button:hover::after {
+            content: "Logout";
+            color: white;
+            margin-left: 8px; /* Space between icon and text */
+        }
+        form {
+            background: white;
+            padding: 20px;
+            padding-right: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 350px;
+            position: relative; /* Needed for absolute positioning of close button */
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        select {
+            margin-top: 10px;
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+            display: block;
+            overflow: hidden;
+        }
+        .form-button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-button:hover {
+            background-color: #0056b3;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border: none;
+            background: none;
+            color: #333;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        .close-button:hover {
+            color: #ff0000;
+        }
+
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            max-width: 600px; /* Maximum width */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        /* The Close Button */
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .modal-content {
+                margin: 20% auto;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Administrator Portal</h1>
+    </div>
+
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="messageText"></p>
+        </div>
+    </div>
+    
+    <form>
+        <button type="button" class="close-button" onclick="history.back();">&#10005;</button>
+        <h2>Add New User</h2>
+        <div class="input-group">
+            <input type="text" placeholder="Username" name="username" required>
+        </div>
+        <div class="input-group">
+            <input type="text" placeholder="First Name" name="firstName" required>
+        </div>
+        <div class="input-group">
+            <input type="text" placeholder="Last Name" name="lastName" required>
+        </div>
+        <div class="input-group">
+            <input type="email" placeholder="Email Address" name="email" required>
+        </div>
+        <div class="input-group">
+            <input type="password" placeholder="Password" name="password" required>
+        </div>
+        <div class="input-group">
+            <input type="text" id="datepicker" placeholder="Date of Birth" name="dob" required>
+        </div>
+        <div class="input-group">
+            <label for="roleSelect">Select Role:</label>
+            <select id="roleSelect" name="roles" multiple size="5">
+                <option value="patient">Patient</option>
+                <option value="nurse">Nurse</option>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
+                <option value="family_member">Family Member</option>
+            </select>
+        </div>
+        <button type="submit" class="form-button">Add User</button>
+    </form>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.24.0/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+    <script>
+        var picker = new Pikaday({ 
+            field: document.getElementById('datepicker'),
+            format: 'YYYY-MM-DD',
+            yearRange: [1900, new Date().getFullYear()]
+        });
+
+        document.getElementById('roleSelect').addEventListener('mousedown', function(e) {
+            let option = e.target;
+            if (option.tagName === 'OPTION') {
+                option.selected = !option.selected;
+                e.preventDefault();
+            }
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                
+                const datePickerValue = document.querySelector('input[name="dob"]').value;
+                const dateObject = new Date(datePickerValue);
+                const formattedDate = dateObject.toISOString().substring(0, 10);
+
+                const data = {
+                    username: document.querySelector('input[name="username"]').value,
+                    firstName: document.querySelector('input[name="firstName"]').value,
+                    lastName: document.querySelector('input[name="lastName"]').value,
+                    email: document.querySelector('input[name="email"]').value,
+                    password: document.querySelector('input[name="password"]').value,
+                    dateOfBirth: formattedDate,
+                    roles: Array.from(document.querySelector('#roleSelect').selectedOptions).map(option => option.value)
+                };
+                
+                console.log(data);
+
+                fetch('http://127.0.0.1:5000/auth/register', { // Adjust the URL as needed if your Flask app is hosted elsewhere
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // This line is crucial
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    // When using 'no-cors', response.type will be 'opaque' and response.json() will not be available
+                    if (response.ok) {
+                        console.log('Success');
+                        showMessage('User created successfully.', true);
+                    } else {
+                        console.error('Server returned error response');
+                        showMessage(result.message || 'Error creating user.', false);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    showMessage('Failed to send data to the server.', false);
+                });
+            });
+        });
+
+        function showMessage(message, isSuccess) {
+    const modal = document.getElementById('messageModal');
+    const text = document.getElementById('messageText');
+    const closeButton = document.querySelector('.close-button');
+
+    text.textContent = message;
+    modal.style.display = 'block';
+
+    closeButton.onclick = function() {
+        modal.style.display = 'none';
+    };
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+
+    if (isSuccess) {
+        clearForm();
+    }
+}
+
+function clearForm() {
+    document.querySelector('form').reset();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => { data[key] = value; });
+        registerUser(data);
+    });
+});
+
+    </script>
+
+</body>
+</html>

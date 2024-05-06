@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .logout-button {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: url('src/logoutIcon.png') no-repeat center center / cover;
+            background-color: #ccc; /* Fallback color if image doesn't load */
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .logout-button:hover {
+            background-color: #0056b3; /* Button color changes on hover */
+            width: 100px; /* Allow text width */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logout-button:hover::after {
+            content: "Logout";
+            color: white;
+            margin-left: 8px; /* Space between icon and text */
+        }
+        .nav-link {
+            background: white;
+            color: #007BFF;
+            padding: 10px;
+            text-decoration: none;
+            margin: 15px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 250px;
+            height: 100px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+        .nav-link img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Administrator Dashboard</h1>
+        <button class="logout-button"></button>
+    </div>
+
+    <a href="add_user.html" class="nav-link">
+        <img src="src/addUser.png" alt="Add User">
+        <div>Add User</div>
+    </a>
+    <a href="manage_roles.html" class="nav-link">
+        <img src="src/manageRole.png" alt="Manage Roles">
+        <div>Manage Roles</div>
+    </a>
+    <a href="device_management.html" class="nav-link">
+        <img src="src/deviceManagement.png" alt="Device Management">
+        <div>Device Management</div>
+    </a>
+
+</body>
+</html>
