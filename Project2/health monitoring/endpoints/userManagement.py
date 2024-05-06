@@ -2,9 +2,12 @@ from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from bson import ObjectId
 from bson.errors import InvalidId
+from flask_cors import CORS, cross_origin 
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb+srv://visaaln2:visaal456@ec530.qevqtrc.mongodb.net/healthmonitoring?retryWrites=true&w=majority"
+CORS(app)  # Enable CORS for all routes
+
+app.config["MONGO_URI"] = "mongodb+srv://admin:admin@ec530.qevqtrc.mongodb.net/healthmonitoring?retryWrites=true&w=majority"
 mongo = PyMongo(app)
 
 # Helper to parse ObjectId to string
@@ -30,11 +33,48 @@ def list_users():
     users_list = [parse_json(user) for user in users]
     return jsonify(users_list), 200
 
+@app.route('/admin/search', methods=['GET'])
+@cross_origin()
+def search_users():
+    search_query = request.args.get('query', '')
+    print(f"Search query received: {search_query}")
+
+    query = {}
+    if search_query:
+        regex = f'^{search_query}'
+        query = {
+            "$or": [
+                {"personalInfo.firstName": {"$regex": regex, "$options": "i"}},
+                {"personalInfo.lastName": {"$regex": regex, "$options": "i"}}
+            ]
+        }
+    print(f"MongoDB query: {query}")
+
+    users = mongo.db.users.find(query)
+    usernames_list = [user['personalInfo']['firstName'] + " " + user['personalInfo']['lastName'] for user in users]
+    print(f"Users found: {usernames_list}")
+
+    return jsonify(usernames_list), 200
+
+
+
 @app.route('/admin/users/<userId>', methods=['PUT'])
 def update_user(userId):
-    data = request.json
+    data = request.json  # This will contain the personalInfo object and potentially other fields
+
     try:
-        result = mongo.db.users.update_one({'_id': ObjectId(userId)}, {'$set': data})
+        # Prepare the update object to include personalInfo and roles if provided
+        update_data = {
+            '$set': {
+                'personalInfo': data.get('personalInfo', {})  # Ensuring the update only affects the personalInfo subdocument
+            }
+        }
+        
+        # Check if roles are provided and update them
+        if 'roles' in data:
+            update_data['$set']['roles'] = data['roles']
+
+        result = mongo.db.users.update_one({'_id': ObjectId(userId)}, update_data)
         if result.modified_count:
             return jsonify({'message': 'User updated successfully'}), 200
         else:
@@ -115,6 +155,44 @@ def remove_role(userId):
     else:
         return jsonify({'error': 'User not found or roles not present in the user'}), 404
 
+
+@app.route('/admin/search/details', methods=['GET'])
+@cross_origin()
+def search_user_details():
+    # Fetch full name from query parameters
+    full_name = request.args.get('name', '')
+    print(f"Search query received: Full Name: {full_name}")
+
+    # Split full name into first name and last name
+    name_parts = full_name.split()
+    if len(name_parts) < 2:
+        return jsonify({"error": "Please provide both first and last names."}), 400
+
+    first_name, last_name = name_parts[0], ' '.join(name_parts[1:])  # Handles middle names or double last names
+
+    print(f"Searching for: First Name: {first_name}, Last Name: {last_name}")
+
+    # Construct query to find users based on exact first name and last name
+    query = {
+        "personalInfo.firstName": first_name,
+        "personalInfo.lastName": last_name
+    }
+
+    print(f"MongoDB query: {query}")
+
+    # Execute the query
+    user = mongo.db.users.find_one(query)  # Using find_one to ensure only one user is fetched
+
+    # Check if user exists
+    if not user:
+        return jsonify({"error": "No user found matching the provided names."}), 404
+
+    # Clean up MongoDB's _id field for JSON serialization
+    user['_id'] = str(user['_id'])
+
+    print(f"User found: {user}")
+
+    return jsonify(user), 200
 
 
 if __name__ == '__main__':
